@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:safar_khaneh_panel/config/router/app_router.dart';
 import 'package:safar_khaneh_panel/core/constants/colors.dart';
+import 'package:safar_khaneh_panel/core/utils/convert_to_jalali.dart';
 import 'package:safar_khaneh_panel/core/utils/number_formater.dart';
+import 'package:safar_khaneh_panel/core/utils/validators.dart';
+import 'package:safar_khaneh_panel/data/api/user_services.dart';
 import 'package:safar_khaneh_panel/data/models/user_model.dart';
 import 'package:safar_khaneh_panel/widgets/button.dart';
-import 'package:safar_khaneh_panel/widgets/inputs/text_field.dart';
+import 'package:safar_khaneh_panel/widgets/inputs/text_form_field.dart';
 
 class UsersEditScreen extends StatefulWidget {
   final UserModel user;
@@ -16,31 +20,123 @@ class UsersEditScreen extends StatefulWidget {
 }
 
 class _UsersEditScreenState extends State<UsersEditScreen> {
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
+  final GlobalKey<FormState> _editUserFormKey = GlobalKey<FormState>();
+  final TextEditingController fullNameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final UserService _userService = UserService();
+
+  bool _isAdmin = false;
+  bool _isActive = false;
 
   @override
   void initState() {
     super.initState();
-    firstNameController.text = widget.user.firstName;
-    lastNameController.text = widget.user.lastName;
-    emailController.text = widget.user.email;
-    phoneController.text = formatNumberToPersianWithoutSeparator(
-      widget.user.phone,
-    );
-    passwordController.text = widget.user.password;
+    fullNameController.text = widget.user.fullName;
+    phoneController.text = widget.user.phoneNumber;
+    _isAdmin = widget.user.isAdmin;
+    _isActive = widget.user.isActive;
+  }
+
+  bool _isLoading = false;
+
+  void _handleEditUser(context) async {
+    if (!_editUserFormKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      await _userService.updateUser(
+        id: widget.user.id,
+        fullName: fullNameController.text,
+        phoneNumber: phoneController.text,
+        isActive: _isActive,
+        isAdmin: _isAdmin,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Text(
+            'ویرایش با موفقیت انجام شد',
+            textDirection: TextDirection.rtl,
+          ),
+          backgroundColor: AppColors.success200,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Text(
+            'خطا در ویرایش کاربر',
+            textDirection: TextDirection.rtl,
+          ),
+          backgroundColor: AppColors.error200,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _handleDeleteUser(context) async {
+    try {
+      await _userService.deleteUser(widget.user.id);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Text(
+            'حذف با موفقیت انجام شد',
+            textDirection: TextDirection.rtl,
+          ),
+          backgroundColor: AppColors.success200,
+          duration: const Duration(milliseconds: 1800),
+        ),
+      );
+
+      Future.delayed(const Duration(milliseconds: 1900), () {
+        GoRouter.of(navigatorKey.currentContext!).go('/users');
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Text('خطا در حذف کاربر', textDirection: TextDirection.rtl),
+          backgroundColor: AppColors.error200,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   @override
   void dispose() {
-    firstNameController.dispose();
-    lastNameController.dispose();
-    emailController.dispose();
+    fullNameController.dispose();
     phoneController.dispose();
-    passwordController.dispose();
     super.dispose();
   }
 
@@ -63,22 +159,12 @@ class _UsersEditScreenState extends State<UsersEditScreen> {
             offset: const Offset(0, 48),
             icon: const Icon(Iconsax.menu, color: AppColors.white),
             onSelected: (value) {
-              if (value == 'edit') {
-              } else if (value == 'delete') {}
+              if (value == 'delete') {
+                _handleDeleteUser(context);
+              }
             },
             itemBuilder: (context) {
               return [
-                PopupMenuItem(
-                  value: 'edit',
-                  child: Text(
-                    'انتخاب به‌عنوان ادمین',
-                    style: TextStyle(
-                      color: AppColors.primary800,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
                 PopupMenuItem(
                   value: 'delete',
                   child: Text(
@@ -106,26 +192,248 @@ class _UsersEditScreenState extends State<UsersEditScreen> {
             style: TextStyle(color: AppColors.white),
           ),
         ),
-        body: Container(
-          margin: const EdgeInsets.only(top: 16),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            spacing: 16,
-            children: [
-              InputTextField(label: 'نام', initialValue: firstNameController),
-              InputTextField(
-                label: 'نام خانوادگی',
-                initialValue: lastNameController,
+        body: SingleChildScrollView(
+          child: Container(
+            margin: const EdgeInsets.only(top: 16),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Form(
+                  key: _editUserFormKey,
+                  child: Column(
+                    spacing: 16,
+                    children: [
+                      InputTextFormField(
+                        label: 'نام و نام خانوادگی',
+                        controller: fullNameController,
+                        validator: (value) {
+                          return AppValidator.userName(value);
+                        },
+                      ),
+                      InputTextFormField(
+                        label: 'شماره همراه',
+                        controller: phoneController,
+                        validator: (value) {
+                          return AppValidator.phoneNumber(value);
+                        },
+                      ),
+                      Row(
+                        children: [
+                          const Text('فعال', style: TextStyle(fontSize: 16)),
+                          const Spacer(),
+                          Transform.scale(
+                            scale: 0.85,
+                            child: Switch(
+                              value: _isActive,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isActive = value ?? false;
+                                });
+                              },
+                              inactiveThumbColor: AppColors.grey400,
+                              activeColor: AppColors.primary800,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Text('ادمین', style: TextStyle(fontSize: 16)),
+                          const Spacer(),
+                          Transform.scale(
+                            scale: 0.85,
+                            child: Switch(
+                              value: _isAdmin,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isAdmin = value ?? false;
+                                });
+                              },
+                              inactiveThumbColor: AppColors.grey400,
+                              activeColor: AppColors.primary800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.success200, width: 1.5),
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Iconsax.message,
+                                color: AppColors.grey400,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'ایمیل',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.grey400,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            widget.user.email,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.grey500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Iconsax.calendar_tick,
+                                color: AppColors.grey400,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'تاریخ ایجاد',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.grey400,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            formatNumberToPersianWithoutSeparator(
+                              convertToJalaliDate(widget.user.createdAt),
+                            ),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.grey500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      const Divider(color: AppColors.success200, thickness: 1),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Iconsax.wallet,
+                                color: AppColors.grey400,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'حساب کاربر',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.grey400,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            formatNumberToPersian(widget.user.walletBalance),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.grey500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Iconsax.profile_tick,
+                                color: AppColors.grey400,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'تایید ایمیل؟',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.grey400,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Icon(
+                            widget.user.isEmailVerified
+                                ? Iconsax.tick_circle
+                                : Iconsax.close_circle,
+                            color: widget.user.isEmailVerified
+                                ? AppColors.success200
+                                : AppColors.error200,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        bottomNavigationBar: Container(
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            bottom: 20,
+            top: 12,
+          ),
+          decoration: const BoxDecoration(
+            color: AppColors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                offset: Offset(0, -4),
+                blurRadius: 12,
+                spreadRadius: 0,
               ),
-              InputTextField(label: 'ایمیل', initialValue: emailController),
-              InputTextField(label: 'تلفن', initialValue: phoneController),
-              InputTextField(
-                label: 'رمز عبور',
-                initialValue: passwordController,
-              ),
-              const Spacer(),
-              Button(onPressed: () {}, label: 'ویرایش', width: double.infinity),
             ],
+          ),
+          child: Button(
+            onPressed: () {
+              _handleEditUser(context);
+            },
+            label: 'ویرایش',
+            width: double.infinity,
+            isLoading: _isLoading,
+            enabled: !_isLoading,
           ),
         ),
       ),

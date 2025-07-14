@@ -12,7 +12,7 @@ class AuthApiClient {
   factory AuthApiClient() {
     final dio = Dio(
       BaseOptions(
-        baseUrl: 'http://127.0.0.1:8000/api/',
+        baseUrl: 'http://127.0.0.1:8000/api/admin/',
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {
