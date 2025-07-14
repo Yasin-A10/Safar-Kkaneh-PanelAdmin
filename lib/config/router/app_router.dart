@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:safar_khaneh_panel/config/router/route_paths.dart';
+import 'package:safar_khaneh_panel/core/network/secure_token_storage.dart';
 import 'package:safar_khaneh_panel/data/models/request_model.dart';
 import 'package:safar_khaneh_panel/data/models/reservation_model.dart';
 import 'package:safar_khaneh_panel/data/models/residence_model.dart';
@@ -16,12 +18,18 @@ import 'package:safar_khaneh_panel/features/residences/presentation/residences_l
 import 'package:safar_khaneh_panel/features/transactions/presentation/transaction_detail_screen.dart';
 import 'package:safar_khaneh_panel/features/transactions/presentation/transaction_list_screen.dart';
 import 'package:safar_khaneh_panel/features/users/presentation/users_edit_screen.dart';
+import 'package:safar_khaneh_panel/roor/not_found_screen.dart';
 import 'package:safar_khaneh_panel/roor/root_screen.dart';
 import 'package:safar_khaneh_panel/features/dashboard/presentation/dashboard_screen.dart';
 import 'package:safar_khaneh_panel/features/menu/presentation/menu_screen.dart';
 import 'package:safar_khaneh_panel/features/users/presentation/users_list_screen.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+final List<RegExp> publicRoutePatterns = [RegExp(r'^/login$')];
+
 final GoRouter appRouter = GoRouter(
+  navigatorKey: navigatorKey,
   initialLocation: RoutePaths.dashboard,
   routes: [
     GoRoute(
@@ -107,8 +115,6 @@ final GoRouter appRouter = GoRouter(
       },
     ),
 
-
-
     ShellRoute(
       builder: (context, state, child) => RootScreen(child: child),
       routes: [
@@ -123,4 +129,18 @@ final GoRouter appRouter = GoRouter(
       ],
     ),
   ],
+  redirect: (context, state) async {
+    final isLoggedIn = await TokenStorage.hasAccessToken();
+    final currentPath = state.matchedLocation;
+
+    final isPublicRoute = publicRoutePatterns.any(
+      (pattern) => pattern.hasMatch(currentPath),
+    );
+
+    if (!isLoggedIn && !isPublicRoute) return '/login';
+    if (isLoggedIn && currentPath == '/login') return '/dashboard';
+    return null;
+  },
+
+  errorBuilder: (context, state) => const NotFoundScreen(),
 );
