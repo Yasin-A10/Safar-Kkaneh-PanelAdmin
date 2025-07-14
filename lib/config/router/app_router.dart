@@ -7,7 +7,7 @@ import 'package:safar_khaneh_panel/data/models/reservation_model.dart';
 import 'package:safar_khaneh_panel/data/models/residence_model.dart';
 import 'package:safar_khaneh_panel/data/models/user_model.dart';
 import 'package:safar_khaneh_panel/features/auth/presentation/login_screen.dart';
-import 'package:safar_khaneh_panel/features/auth/presentation/register_screen.dart';
+import 'package:safar_khaneh_panel/trash/register_screen.dart';
 import 'package:safar_khaneh_panel/features/discount/presentation/discount_screen.dart';
 import 'package:safar_khaneh_panel/features/request/presentation/request_detail_screen.dart';
 import 'package:safar_khaneh_panel/features/request/presentation/request_screen.dart';
