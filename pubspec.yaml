@@ -43,7 +43,10 @@ dependencies:
   iconsax: ^0.0.8
   fl_chart: ^1.0.0
   persian_datetime_picker: ^3.1.0
-  
+  flutter_secure_storage: ^9.2.4
+  dio: ^5.8.0+1
+  pretty_dio_logger: ^1.4.0
+  flutter_native_splash: ^2.4.6
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +65,13 @@ flutter_launcher_icons:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  
+
+flutter_native_splash:
+  android: true
+  ios: true
+  color: "#ffffff"
+  image: "assets/logo/SAFAR-KHANEH_Green.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -76,7 +86,7 @@ flutter:
     - assets/images/Residences/5.jpg
     - assets/logo/SAFAR-KHANEH.png
     - assets/logo/SAFAR-KHANEH_Green.png
-    - assets/images/Not-found.svg
+    - assets/images/Residences/Not-Found.jpg
   fonts:
     - family: Vazir
       fonts:
