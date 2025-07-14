@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:safar_khaneh_panel/config/router/app_router.dart';
 import 'package:safar_khaneh_panel/core/constants/colors.dart';
 import 'package:safar_khaneh_panel/core/network/secure_token_storage.dart';
 import 'package:safar_khaneh_panel/core/utils/validators.dart';
@@ -57,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
 
-        context.go('/dashboard');
+        GoRouter.of(navigatorKey.currentContext!).go('/dashboard');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
