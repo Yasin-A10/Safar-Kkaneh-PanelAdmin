@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:safar_khaneh_panel/config/router/app_router.dart';
 import 'package:safar_khaneh_panel/core/constants/colors.dart';
 
 class RootScreen extends StatefulWidget {
@@ -141,7 +142,13 @@ class _RootScreenState extends State<RootScreen> {
             else
               IconButton(
                 icon: const Icon(Iconsax.arrow_left),
-                onPressed: () => context.pop(),
+                onPressed: () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    GoRouter.of(navigatorKey.currentContext!).go('/dashboard');
+                  }
+                },
               ),
           ],
         ),

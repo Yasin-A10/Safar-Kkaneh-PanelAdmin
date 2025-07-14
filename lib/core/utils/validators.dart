@@ -1,4 +1,6 @@
 
+import 'package:safar_khaneh_panel/data/models/residence_model.dart';
+
 class AppValidator {
   static String? userName(String? value, {String fieldName = 'نام کاربری'}) {
     if (value == null || value.trim().isEmpty) {
@@ -55,19 +57,19 @@ class AppValidator {
     return null;
   }
 
-  // static String? province(Province? value, {String fieldName = 'استان'}) {
-  //   if (value == null) {
-  //     return '$fieldName نمی‌تواند خالی باشد';
-  //   }
-  //   return null;
-  // }
+  static String? province(Province? value, {String fieldName = 'استان'}) {
+    if (value == null) {
+      return '$fieldName نمی‌تواند خالی باشد';
+    }
+    return null;
+  }
 
-  // static String? city(City? value, {String fieldName = 'شهر'}) {
-  //   if (value == null) {
-  //     return '$fieldName نمی‌تواند خالی باشد';
-  //   }
-  //   return null;
-  // }
+  static String? city(City? value, {String fieldName = 'شهر'}) {
+    if (value == null) {
+      return '$fieldName نمی‌تواند خالی باشد';
+    }
+    return null;
+  }
 
   static String? type(String? value, {String fieldName = 'نوع'}) {
     if (value == null) {
