@@ -5,8 +5,8 @@ import 'package:safar_khaneh_panel/core/constants/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MapWidget extends StatefulWidget {
-  final double latitude;
-  final double longitude;
+  final String latitude;
+  final String longitude;
 
   const MapWidget({super.key, required this.latitude, required this.longitude});
 
@@ -24,7 +24,7 @@ class _MapWidgetState extends State<MapWidget> {
     _markers = {
       Marker(
         markerId: const MarkerId('residence_location'),
-        position: LatLng(widget.latitude, widget.longitude),
+        position: LatLng(double.parse(widget.latitude), double.parse(widget.longitude)),
         infoWindow: const InfoWindow(title: 'مکان اقامتگاه'),
       ),
     };
@@ -84,7 +84,7 @@ class _MapWidgetState extends State<MapWidget> {
                 mapController = controller;
               },
               initialCameraPosition: CameraPosition(
-                target: LatLng(widget.latitude, widget.longitude),
+                target: LatLng(double.parse(widget.latitude), double.parse(widget.longitude)),
                 zoom: 14.0,
               ),
               mapType: MapType.normal,

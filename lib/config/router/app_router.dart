@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:safar_khaneh_panel/config/router/route_paths.dart';
 import 'package:safar_khaneh_panel/core/network/secure_token_storage.dart';
-import 'package:safar_khaneh_panel/data/models/request_model.dart';
 import 'package:safar_khaneh_panel/data/models/reservation_model.dart';
 import 'package:safar_khaneh_panel/data/models/residence_model.dart';
 import 'package:safar_khaneh_panel/data/models/user_model.dart';
@@ -110,7 +109,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RoutePaths.request,
       builder: (context, state) {
-        final request = state.extra as RequestModel;
+        final request = state.extra as ResidenceModel;
         return RequestDetailScreen(request: request);
       },
     ),
