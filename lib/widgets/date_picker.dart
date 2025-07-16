@@ -46,6 +46,9 @@ class _DatePickerState extends State<DatePicker> {
         _endDate = picked;
       });
     }
+    if (_startDate != null && _endDate != null) {
+  widget.onRangeSelected(_startDate!, _endDate!);
+}
   }
 
   @override
@@ -55,11 +58,6 @@ class _DatePickerState extends State<DatePicker> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // const Text(
-        //   'تاریخ رزرو',
-        //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-        // ),
-        // const SizedBox(height: 16),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,

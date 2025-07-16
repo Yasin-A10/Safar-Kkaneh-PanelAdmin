@@ -9,6 +9,7 @@ class DropdownField<T> extends StatelessWidget {
   final void Function(T?) onChanged;
   final String Function(T) itemLabel;
   final String? hintText;
+  // final String Function(T?) validator;
 
   const DropdownField({
     super.key,
@@ -18,6 +19,7 @@ class DropdownField<T> extends StatelessWidget {
     required this.onChanged,
     required this.itemLabel,
     this.hintText,
+    // required this.validator,
   });
 
   @override
@@ -53,6 +55,7 @@ class DropdownField<T> extends StatelessWidget {
         );
       }).toList(),
       onChanged: onChanged,
+      // validator: validator,
     );
   }
 }

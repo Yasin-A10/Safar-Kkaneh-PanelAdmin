@@ -1,4 +1,3 @@
-
 import 'package:safar_khaneh_panel/data/models/residence_model.dart';
 
 class AppValidator {
@@ -92,5 +91,22 @@ class AppValidator {
       return '$fieldName باید حداقل ۱۰۰۰ تومان باشد';
     }
     return null;
+  }
+
+  static String? discountCode(String? value, {String fieldName = 'کد تخفیف'}) {
+    if (value == null || value.trim().isEmpty) {
+      return '$fieldName نمی‌تواند خالی باشد';
+    }
+    if (value.length < 5) {
+      return '$fieldName باید حداقل ۵ کاراکتر داشته باشد';
+    }
+    return null;
+  }
+
+  static String discountPercentageValidator<T>(T? value) {
+    if (value == null) {
+      return 'لطفاً یک مقدار انتخاب کنید';
+    }
+    return '';
   }
 }
