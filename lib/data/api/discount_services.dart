@@ -4,9 +4,13 @@ import 'package:safar_khaneh_panel/data/models/discount_model.dart';
 class DiscountService {
   final AuthApiClient _client = AuthApiClient();
 
-  Future<List<DiscountModel>> fetchDiscounts() async {
+  Future<List<DiscountModel>> fetchDiscounts({
+    String? query,
+  }) async {
     try {
-      final response = await _client.get('discounts/');
+      final response = await _client.get('discounts/', queryParams: {
+        'q': query,
+      });
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List data = response.data as List;

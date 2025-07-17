@@ -6,6 +6,7 @@ import 'package:safar_khaneh_panel/core/constants/colors.dart';
 import 'package:safar_khaneh_panel/core/utils/number_formater.dart';
 import 'package:safar_khaneh_panel/data/api/residence_services.dart';
 import 'package:safar_khaneh_panel/data/models/residence_model.dart';
+import 'package:safar_khaneh_panel/widgets/search_bar.dart';
 
 class ResidencesListScreen extends StatefulWidget {
   const ResidencesListScreen({super.key});
@@ -30,11 +31,37 @@ class _ResidencesListScreenState extends State<ResidencesListScreen> {
     });
   }
 
+  void _handleSearch(String query) async {
+    final result = await _residenceServices.fetchConfirmedResidences(
+      query: query,
+    );
+    setState(() {
+      residences = Future.value(result);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: CustomSearchBar(
+                    onSearch: _handleSearch,
+                    hintText: 'جستجو...',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         title: const Text(
           'لیست اقامتگاه ها',
           style: TextStyle(color: AppColors.secondary500),

@@ -4,9 +4,13 @@ import 'package:safar_khaneh_panel/data/models/reservation_model.dart';
 class ReservationService {
   final AuthApiClient _client = AuthApiClient();
 
-  Future<List<ReservationModel>> fetchReservations() async {
+  Future<List<ReservationModel>> fetchReservations({String? query, String? status, String? type}) async {
     try {
-      final response = await _client.get('reservation');
+      final response = await _client.get('reservation', queryParams: {
+        'q': query,
+        'status': status,
+        'type': type,
+      });
 
       if (response.statusCode == 200) {
         final List data = response.data as List;

@@ -4,9 +4,12 @@ import 'package:safar_khaneh_panel/data/models/user_model.dart';
 class UserService {
   final AuthApiClient _client = AuthApiClient();
 
-  Future<List<UserModel>> fetchUsers() async {
+  Future<List<UserModel>> fetchUsers({String? query, bool? isAdmin}) async {
     try {
-      final response = await _client.get('users/');
+      final response = await _client.get('users/', queryParams: {
+        'q': query,
+        'is_admin': isAdmin,
+      });
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List data = response.data as List;

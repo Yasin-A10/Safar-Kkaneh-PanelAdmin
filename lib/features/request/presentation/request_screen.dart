@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:safar_khaneh_panel/data/api/request_services.dart';
 import 'package:safar_khaneh_panel/data/models/residence_model.dart';
+import 'package:safar_khaneh_panel/widgets/search_bar.dart';
 
 class RequestScreen extends StatefulWidget {
   const RequestScreen({super.key});
@@ -30,11 +31,35 @@ class _RequestScreenState extends State<RequestScreen> {
     });
   }
 
+  void _handleSearch(String query) async {
+    final result = await _requestServices.fetchPendingResidences(query: query);
+    setState(() {
+      _requests = Future.value(result);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: CustomSearchBar(
+                    onSearch: _handleSearch,
+                    hintText: 'جستجو...',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         title: const Text(
           'درخواست‌های ثبت اقامتگاه',
           style: TextStyle(color: AppColors.grey800),

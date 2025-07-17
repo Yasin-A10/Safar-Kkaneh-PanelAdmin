@@ -4,9 +4,11 @@ import 'package:safar_khaneh_panel/data/models/residence_model.dart';
 class RequestServices {
   final AuthApiClient _client = AuthApiClient();
 
-  Future<List<ResidenceModel>> fetchPendingResidences() async {
+  Future<List<ResidenceModel>> fetchPendingResidences({String? query}) async {
     try {
-      final response = await _client.get('residences/pending/');
+      final response = await _client.get('residences/pending/', queryParams: {
+        'q': query,
+      });
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List data = response.data as List;

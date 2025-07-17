@@ -6,9 +6,11 @@ import 'package:safar_khaneh_panel/data/models/residence_model.dart';
 class ResidenceServices {
   final AuthApiClient _client = AuthApiClient();
 
-  Future<List<ResidenceModel>> fetchConfirmedResidences() async {
+  Future<List<ResidenceModel>> fetchConfirmedResidences({String? query}) async {
     try {
-      final response = await _client.get('residences/confirmed/');
+      final response = await _client.get('residences/confirmed/', queryParams: {
+        'q': query,
+      });
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List data = response.data as List;
