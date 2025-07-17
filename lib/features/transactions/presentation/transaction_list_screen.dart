@@ -62,6 +62,12 @@ class _TransactionsListScreenState extends State<TransactionsListScreen> {
     _transactions = _transactionService.fetchTransactions();
   }
 
+  Future<void> _handleRefresh() async {
+    setState(() {
+      _transactions = _transactionService.fetchTransactions();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,74 +86,77 @@ class _TransactionsListScreenState extends State<TransactionsListScreen> {
           ),
         ],
       ),
-      body: FutureBuilder(
-        future: _transactions,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('خطا: ${snapshot.error}'));
-          }
-          final transactions = snapshot.data!;
-          return ListView.builder(
-            itemCount: transactions.length,
-            itemBuilder: (context, index) {
-              final transaction = transactions[index];
+      body: RefreshIndicator(
+        onRefresh: _handleRefresh,
+        child: FutureBuilder(
+          future: _transactions,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('خطا: ${snapshot.error}'));
+            }
+            final transactions = snapshot.data!;
+            return ListView.builder(
+              itemCount: transactions.length,
+              itemBuilder: (context, index) {
+                final transaction = transactions[index];
 
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: AppColors.warning150,
-                  child: Text(
-                    formatNumberToPersian(transaction.id),
-                    style: const TextStyle(color: AppColors.white),
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: AppColors.warning150,
+                    child: Text(
+                      formatNumberToPersian(transaction.id),
+                      style: const TextStyle(color: AppColors.white),
+                    ),
                   ),
-                ),
-                title: Text(_getTransactionTitle(transaction)),
-                subtitle: Row(
-                  children: [
-                    Text(
-                      transaction.user.fullName,
-                      style: const TextStyle(
-                        color: AppColors.grey700,
-                        fontSize: 14,
+                  title: Text(_getTransactionTitle(transaction)),
+                  subtitle: Row(
+                    children: [
+                      Text(
+                        transaction.user.fullName,
+                        style: const TextStyle(
+                          color: AppColors.grey700,
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Text(
-                      formatNumberToPersianWithoutSeparator(
-                        convertToJalaliDate(transaction.createdAt),
+                      const SizedBox(width: 16),
+                      Text(
+                        formatNumberToPersianWithoutSeparator(
+                          convertToJalaliDate(transaction.createdAt),
+                        ),
+                        style: const TextStyle(
+                          color: AppColors.grey500,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                      style: const TextStyle(
-                        color: AppColors.grey500,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(width: 16),
+                      Text(
+                        _getTransactionPrice(transaction),
+                        style: TextStyle(
+                          color: transaction.status == 'confirmed'
+                              ? AppColors.success200
+                              : AppColors.error300,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Text(
-                      _getTransactionPrice(transaction),
-                      style: TextStyle(
-                        color: transaction.status == 'confirmed'
-                            ? AppColors.success200
-                            : AppColors.error300,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-                trailing: const Icon(Iconsax.eye),
-                onTap: () {
-                  context.push(
-                    '/transaction/${transaction.id}',
-                    extra: transaction,
-                  );
-                },
-              );
-            },
-          );
-        },
+                    ],
+                  ),
+                  trailing: const Icon(Iconsax.eye),
+                  onTap: () {
+                    context.push(
+                      '/transaction/${transaction.id}',
+                      extra: transaction,
+                    );
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

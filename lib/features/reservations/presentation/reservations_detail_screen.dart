@@ -126,13 +126,27 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          widget.reservation.residence.title,
-                          style: const TextStyle(
-                            color: AppColors.grey900,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              widget.reservation.residence.title,
+                              style: const TextStyle(
+                                color: AppColors.grey900,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            widget.reservation.status == 'confirmed'
+                                ? const Icon(
+                                    Iconsax.tick_circle,
+                                    color: AppColors.success200,
+                                  )
+                                : const Icon(
+                                    Iconsax.close_circle,
+                                    color: AppColors.error200,
+                                  ),
+                          ],
                         ),
                         const Spacer(),
                         Text(
@@ -495,13 +509,54 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                Text(
-                                  'مبلغ: ${formatNumberToPersian(payment.amount / 10)}',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.grey500,
-                                  ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'مبلغ: ${formatNumberToPersian(payment.amount / 10)}',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.grey500,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      '.',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.grey500,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    if (payment.type == 'cash')
+                                      const Text(
+                                        'پرداخت نقدی',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.grey500,
+                                        ),
+                                      ),
+                                    if (payment.type == 'online')
+                                      const Text(
+                                        'پرداخت آنلاین',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.grey500,
+                                        ),
+                                      ),
+                                    if (payment.type == 'wallet')
+                                      const Text(
+                                        'پرداخت از کیف پول',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.grey500,
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ],
                             ),
