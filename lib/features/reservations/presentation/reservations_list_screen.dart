@@ -2,200 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:safar_khaneh_panel/core/constants/colors.dart';
+import 'package:safar_khaneh_panel/core/utils/convert_to_jalali.dart';
 import 'package:safar_khaneh_panel/core/utils/number_formater.dart';
 import 'package:safar_khaneh_panel/data/models/reservation_model.dart';
+import 'package:safar_khaneh_panel/data/api/reservation_services.dart';
 
-final List<ReservationModel> reservations = [
-  ReservationModel(
-    id: 1,
-    title: 'ویلا کوهستانی',
-    city: 'تهران',
-    province: 'تهران',
-    startDate: '1404/06/01',
-    endDate: '1404/06/10',
-    price: 100000,
-    capacity: 4,
-    roomCount: 2,
-    managerName: 'میلادی',
-    managerPhoneNumber: 0912345678,
-    guestCount: 2,
-    booker: 'محمد حسینی',
-    cleaningFee: 10000,
-    serviceFee: 5000,
-    totalFee: 115000,
-    bookerPhoneNumber: 0912345678,
-    bookerEmail: 'mohammadhossein@gmail.com',
-    transactions: [
-      TransactionModel(
-        transactionId: '123456781',
-        transactionStatus: false,
-        transactionFee: 115000,
-        createdAt: '1404/06/01',
-      ),
-      TransactionModel(
-        transactionId: '123456783',
-        transactionStatus: false,
-        transactionFee: 115000,
-        createdAt: '1404/06/01',
-      ),
-      TransactionModel(
-        transactionId: '123456782',
-        transactionStatus: true,
-        transactionFee: 115000,
-        createdAt: '1404/06/01',
-      ),
-    ],
-  ),
-  ReservationModel(
-    id: 2,
-    title: 'ویلا کویری',
-    city: 'تهران',
-    province: 'تهران',
-    startDate: '1404/06/01',
-    endDate: '1404/06/10',
-    price: 200000,
-    capacity: 4,
-    roomCount: 2,
-    managerName: 'میلادی',
-    managerPhoneNumber: 0912345678,
-    guestCount: 2,
-    booker: 'محمد حسینی',
-    cleaningFee: 10000,
-    serviceFee: 5000,
-    totalFee: 215000,
-    bookerPhoneNumber: 0912345678,
-    bookerEmail: 'mohammadhossein@gmail.com',
-    transactions: [
-      TransactionModel(
-        transactionId: '123456783',
-        transactionStatus: false,
-        transactionFee: 215000,
-        createdAt: '1404/06/01',
-      ),
-      TransactionModel(
-        transactionId: '123456784',
-        transactionStatus: true,
-        transactionFee: 215000,
-        createdAt: '1404/06/01',
-      ),
-    ],
-  ),
-  ReservationModel(
-    id: 3,
-    title: 'ویلا لوکس',
-    city: 'تهران',
-    province: 'تهران',
-    startDate: '1404/06/01',
-    endDate: '1404/06/10',
-    price: 100000,
-    capacity: 4,
-    roomCount: 2,
-    managerName: 'میلادی',
-    managerPhoneNumber: 0912345678,
-    guestCount: 2,
-    booker: 'محمد حسینی',
-    cleaningFee: 10000,
-    serviceFee: 5000,
-    totalFee: 115000,
-    bookerPhoneNumber: 0912345678,
-    bookerEmail: 'mohammadhossein@gmail.com',
-    transactions: [
-      TransactionModel(
-        transactionId: '123456785',
-        transactionStatus: true,
-        transactionFee: 115000,
-        createdAt: '1404/06/01',
-      ),
-    ],
-  ),
-  ReservationModel(
-    id: 4,
-    title: 'خانه سنتی',
-    city: 'تهران',
-    province: 'تهران',
-    startDate: '1404/06/01',
-    endDate: '1404/06/10',
-    price: 100000,
-    capacity: 4,
-    roomCount: 2,
-    managerName: 'میلادی',
-    managerPhoneNumber: 0912345678,
-    guestCount: 2,
-    booker: 'محمد حسینی',
-    cleaningFee: 10000,
-    serviceFee: 5000,
-    totalFee: 115000,
-    bookerPhoneNumber: 0912345678,
-    bookerEmail: 'mohammadhossein@gmail.com',
-    transactions: [
-      TransactionModel(
-        transactionId: '123456786',
-        transactionStatus: true,
-        transactionFee: 115000,
-        createdAt: '1404/06/01',
-      ),
-    ],
-  ),
-  ReservationModel(
-    id: 5,
-    title: 'ویلا کوهستانی',
-    city: 'تهران',
-    province: 'تهران',
-    startDate: '1404/06/01',
-    endDate: '1404/06/10',
-    price: 100000,
-    capacity: 4,
-    roomCount: 2,
-    managerName: 'میلادی',
-    managerPhoneNumber: 0912345678,
-    guestCount: 2,
-    booker: 'محمد حسینی',
-    cleaningFee: 10000,
-    serviceFee: 5000,
-    totalFee: 115000,
-    bookerPhoneNumber: 0912345678,
-    bookerEmail: 'mohammadhossein@gmail.com',
-    transactions: [
-      TransactionModel(
-        transactionId: '123456787',
-        transactionStatus: true,
-        transactionFee: 115000,
-        createdAt: '1404/06/01',
-      ),
-    ],
-  ),
-  ReservationModel(
-    id: 6,
-    title: 'ویلا کوهستانی',
-    city: 'تهران',
-    province: 'تهران',
-    startDate: '1404/06/01',
-    endDate: '1404/06/10',
-    price: 100000,
-    capacity: 4,
-    roomCount: 2,
-    managerName: 'میلادی',
-    managerPhoneNumber: 0912345678,
-    guestCount: 2,
-    booker: 'محمد حسینی',
-    cleaningFee: 10000,
-    serviceFee: 5000,
-    totalFee: 115000,
-    bookerPhoneNumber: 0912345678,
-    bookerEmail: 'mohammadhossein@gmail.com',
-    transactions: [
-      TransactionModel(
-        transactionId: '123456788',
-        transactionStatus: true,
-        transactionFee: 115000,
-        createdAt: '1404/06/01',
-      ),
-    ],
-  ),
-];
-
-class ReservationsListScreen extends StatelessWidget {
+class ReservationsListScreen extends StatefulWidget {
   const ReservationsListScreen({super.key});
+
+  @override
+  State<ReservationsListScreen> createState() => _ReservationsListScreenState();
+}
+
+class _ReservationsListScreenState extends State<ReservationsListScreen> {
+  final ReservationService _reservationService = ReservationService();
+  late Future<List<ReservationModel>> _reservations;
+  @override
+  void initState() {
+    super.initState();
+    _reservations = _reservationService.fetchReservations();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -215,44 +41,56 @@ class ReservationsListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: reservations.length,
-        itemBuilder: (context, index) {
-          final reservation = reservations[index];
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundColor: AppColors.error300,
-              child: Text(
-                formatNumberToPersian(reservation.id),
-                style: const TextStyle(color: AppColors.white),
-              ),
-            ),
-            title: Text(reservation.title),
-            subtitle: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  reservation.booker!,
-                  style: const TextStyle(
-                    color: AppColors.grey700,
-                    fontSize: 14,
+      body: FutureBuilder(
+        future: _reservations,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text('خطایی رخ داده است'));
+          }
+          final reservations = snapshot.data!;
+          return ListView.builder(
+            itemCount: reservations.length,
+            itemBuilder: (context, index) {
+              final reservation = reservations[index];
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: AppColors.error300,
+                  child: Text(
+                    formatNumberToPersian(reservation.id),
+                    style: const TextStyle(color: AppColors.white),
                   ),
                 ),
-                const SizedBox(width: 16),
-                Text(
-                  '${formatNumberToPersianWithoutSeparator(reservation.startDate)} - ${formatNumberToPersianWithoutSeparator(reservation.endDate)}',
-                  style: const TextStyle(
-                    color: AppColors.grey500,
-                    fontSize: 12,
-                  ),
+                title: Text(reservation.residence.title),
+                subtitle: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      reservation.user.fullName,
+                      style: const TextStyle(
+                        color: AppColors.grey700,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      '${formatNumberToPersianWithoutSeparator(convertToJalaliDate(reservation.checkIn))} - ${formatNumberToPersianWithoutSeparator(convertToJalaliDate(reservation.checkOut))}',
+                      style: const TextStyle(
+                        color: AppColors.grey500,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            trailing: const Icon(Iconsax.eye),
-            onTap: () {
-              context.push(
-                '/reservation/${reservation.id}',
-                extra: reservation,
+                trailing: const Icon(Iconsax.eye),
+                onTap: () {
+                  context.push(
+                    '/reservation/${reservation.id}',
+                    extra: reservation,
+                  );
+                },
               );
             },
           );

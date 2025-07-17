@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:safar_khaneh_panel/config/router/app_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:safar_khaneh_panel/core/constants/colors.dart';
+import 'package:safar_khaneh_panel/core/utils/convert_to_jalali.dart';
 import 'package:safar_khaneh_panel/core/utils/number_formater.dart';
 import 'package:safar_khaneh_panel/data/models/reservation_model.dart';
+import 'package:safar_khaneh_panel/data/api/reservation_services.dart';
 
 class ReservationsDetailScreen extends StatefulWidget {
   final ReservationModel reservation;
@@ -15,6 +18,47 @@ class ReservationsDetailScreen extends StatefulWidget {
 }
 
 class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
+  final ReservationService _reservationService = ReservationService();
+
+  void _handleCancelReservation(context) async {
+    try {
+      await _reservationService.cancelReservation(widget.reservation.id);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Text(
+            'لغو با موفقیت انجام شد',
+            textDirection: TextDirection.rtl,
+          ),
+          backgroundColor: AppColors.success200,
+          duration: const Duration(milliseconds: 1800),
+        ),
+      );
+
+      Future.delayed(const Duration(milliseconds: 1900), () {
+        GoRouter.of(navigatorKey.currentContext!).go('/reservations');
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Text('خطا در لغو رزرو', textDirection: TextDirection.rtl),
+          backgroundColor: AppColors.error200,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,12 +74,14 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
           offset: const Offset(0, 48),
           icon: const Icon(Iconsax.menu, color: AppColors.white),
           onSelected: (value) {
-            if (value == 'delete') {}
+            if (value == 'deleteReservation') {
+              _handleCancelReservation(context);
+            }
           },
           itemBuilder: (context) {
             return [
               PopupMenuItem(
-                value: 'delete',
+                value: 'deleteReservation',
                 child: Text(
                   'لغو رزرو',
                   style: TextStyle(
@@ -57,7 +103,7 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
           ),
         ],
         title: Text(
-          widget.reservation.title,
+          widget.reservation.residence.title,
           style: const TextStyle(color: AppColors.white),
         ),
       ),
@@ -81,7 +127,7 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                     Row(
                       children: [
                         Text(
-                          widget.reservation.title,
+                          widget.reservation.residence.title,
                           style: const TextStyle(
                             color: AppColors.grey900,
                             fontSize: 20,
@@ -90,7 +136,7 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                         ),
                         const Spacer(),
                         Text(
-                          '${widget.reservation.city}, ${widget.reservation.province}',
+                          '${widget.reservation.residence.location.city.name}, ${widget.reservation.residence.location.city.province.name}',
                           style: const TextStyle(
                             color: AppColors.grey600,
                             fontSize: 16,
@@ -101,7 +147,7 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'رزرو کننده: ${widget.reservation.booker!}',
+                      'رزرو کننده: ${widget.reservation.user.fullName}',
                       style: const TextStyle(
                         color: AppColors.grey700,
                         fontSize: 18,
@@ -134,7 +180,7 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                         ),
                         Text(
                           formatNumberToPersianWithoutSeparator(
-                            widget.reservation.startDate.toString(),
+                            convertToJalaliDate(widget.reservation.checkIn),
                           ),
                           style: const TextStyle(
                             fontSize: 16,
@@ -168,7 +214,7 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                         ),
                         Text(
                           formatNumberToPersianWithoutSeparator(
-                            widget.reservation.endDate.toString(),
+                            convertToJalaliDate(widget.reservation.checkOut),
                           ),
                           style: const TextStyle(
                             fontSize: 16,
@@ -235,7 +281,7 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                           ],
                         ),
                         Text(
-                          widget.reservation.managerName!,
+                          widget.reservation.residence.owner.fullName,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -268,7 +314,7 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                         ),
                         Text(
                           formatNumberToPersianWithoutSeparator(
-                            widget.reservation.bookerPhoneNumber,
+                            widget.reservation.residence.owner.phoneNumber,
                           ),
                           style: const TextStyle(
                             fontSize: 16,
@@ -303,7 +349,9 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                           ],
                         ),
                         Text(
-                          formatNumberToPersian(widget.reservation.price),
+                          formatNumberToPersian(
+                            widget.reservation.pricePerNightSnapshot,
+                          ),
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -336,7 +384,7 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                         ),
                         Text(
                           formatNumberToPersian(
-                            widget.reservation.cleaningFee!,
+                            widget.reservation.cleaningPriceSnapshot,
                           ),
                           style: const TextStyle(
                             fontSize: 16,
@@ -369,7 +417,9 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                           ],
                         ),
                         Text(
-                          formatNumberToPersian(widget.reservation.serviceFee!),
+                          formatNumberToPersian(
+                            widget.reservation.servicesPriceSnapshot,
+                          ),
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -401,7 +451,9 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                           ],
                         ),
                         Text(
-                          formatNumberToPersian(widget.reservation.totalFee),
+                          formatNumberToPersian(
+                            widget.reservation.totalPrice / 10,
+                          ),
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -416,70 +468,64 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
               const SizedBox(height: 32),
               Column(
                 spacing: 16,
-                children: widget.reservation.transactions!.map((transaction) {
+                children: widget.reservation.payments.map((payment) {
                   return Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: AppColors.white,
                       borderRadius: BorderRadius.circular(12),
-                      border: transaction.transactionStatus == true
+                      border: payment.status == 'confirmed'
                           ? Border.all(color: AppColors.success200, width: 2)
                           : Border.all(color: AppColors.error300, width: 2),
                     ),
-                    child:
-                        widget.reservation.transactions != null &&
-                            widget.reservation.transactions!.isNotEmpty
-                        ? Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'شماره تراکنش: ${formatNumberToPersianWithoutSeparator(transaction.transactionId)}',
-                                        style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.grey700,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        'مبلغ: ${formatNumberToPersian(transaction.transactionFee)}',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.grey500,
-                                        ),
-                                      ),
-                                    ],
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'شماره تراکنش: ${formatNumberToPersianWithoutSeparator(payment.id)}',
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.grey700,
                                   ),
-                                  transaction.transactionStatus == true
-                                      ? const Text(
-                                          'موفق',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.success200,
-                                          ),
-                                        )
-                                      : const Text(
-                                          'ناموفق',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.error300,
-                                          ),
-                                        ),
-                                ],
-                              ),
-                            ],
-                          )
-                        : const SizedBox(),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'مبلغ: ${formatNumberToPersian(payment.amount / 10)}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.grey500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            payment.status == 'confirmed'
+                                ? const Text(
+                                    'موفق',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.success200,
+                                    ),
+                                  )
+                                : const Text(
+                                    'ناموفق',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.error300,
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      ],
+                    ),
                   );
                 }).toList(),
               ),

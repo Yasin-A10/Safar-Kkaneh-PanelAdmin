@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:safar_khaneh_panel/config/router/route_paths.dart';
 import 'package:safar_khaneh_panel/core/network/secure_token_storage.dart';
+import 'package:safar_khaneh_panel/data/models/transaction_model.dart';
 import 'package:safar_khaneh_panel/data/models/reservation_model.dart';
 import 'package:safar_khaneh_panel/data/models/residence_model.dart';
 import 'package:safar_khaneh_panel/data/models/user_model.dart';
@@ -83,16 +84,9 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RoutePaths.transaction,
       builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>; // دریافت به‌صورت Map
-        final transaction =
-            extra['transaction']
-                as TransactionModel; // استخراج TransactionModel
-        final reservations =
-            extra['reservations']
-                as List<ReservationModel>; // استخراج لیست رزروها
+        final transaction = state.extra as TransactionModel;
         return TransactionDetailScreen(
           transaction: transaction,
-          reservations: reservations,
         );
       },
     ),
