@@ -465,9 +465,7 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                           ],
                         ),
                         Text(
-                          formatNumberToPersian(
-                            widget.reservation.totalPrice / 10,
-                          ),
+                          formatNumberToPersian(widget.reservation.totalPrice),
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -512,7 +510,7 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                                 Row(
                                   children: [
                                     Text(
-                                      'مبلغ: ${formatNumberToPersian(payment.amount / 10)}',
+                                      'مبلغ: ${formatNumberToPersian(payment.amount)}',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -550,6 +548,17 @@ class _ReservationsDetailScreenState extends State<ReservationsDetailScreen> {
                                     if (payment.type == 'wallet')
                                       const Text(
                                         'پرداخت از کیف پول',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.grey500,
+                                        ),
+                                      ),
+                                    if (payment.type != 'cash' &&
+                                        payment.type != 'online' &&
+                                        payment.type != 'wallet')
+                                      const Text(
+                                        'بازگشت وجه به کیف پول',
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
