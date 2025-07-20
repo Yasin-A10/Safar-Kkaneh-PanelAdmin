@@ -144,7 +144,9 @@ class MenuScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                context.push('/comments');
+              },
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(

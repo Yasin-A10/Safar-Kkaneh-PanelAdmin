@@ -18,6 +18,9 @@ class RoutePaths {
   static const String transactions = '/transactions';
   static const String transaction = '/transaction/:id';
 
+  static const String comments = '/comments';
+  static const String comment = '/comment/:id';
+
   static const String discounts = '/discounts';
 
   static const String requests = '/requests';

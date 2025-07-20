@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:safar_khaneh_panel/config/router/route_paths.dart';
 import 'package:safar_khaneh_panel/core/network/secure_token_storage.dart';
+import 'package:safar_khaneh_panel/data/models/comment_model.dart';
 import 'package:safar_khaneh_panel/data/models/transaction_model.dart';
 import 'package:safar_khaneh_panel/data/models/reservation_model.dart';
 import 'package:safar_khaneh_panel/data/models/residence_model.dart';
 import 'package:safar_khaneh_panel/data/models/user_model.dart';
 import 'package:safar_khaneh_panel/features/auth/presentation/login_screen.dart';
+import 'package:safar_khaneh_panel/features/comments/presentation/comment_edit_screen.dart';
+import 'package:safar_khaneh_panel/features/comments/presentation/comment_list_screen.dart';
 import 'package:safar_khaneh_panel/trash/register_screen.dart';
 import 'package:safar_khaneh_panel/features/discount/presentation/discount_screen.dart';
 import 'package:safar_khaneh_panel/features/request/presentation/request_detail_screen.dart';
@@ -88,6 +91,18 @@ final GoRouter appRouter = GoRouter(
         return TransactionDetailScreen(
           transaction: transaction,
         );
+      },
+    ),
+
+    GoRoute(
+      path: RoutePaths.comments,
+      builder: (context, state) => const CommentsListScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.comment,
+      builder: (context, state) {
+        final comment = state.extra as CommentModel;
+        return CommentDetailScreen(comment: comment);
       },
     ),
 
