@@ -13,8 +13,6 @@ import 'package:safar_khaneh_panel/data/models/user_model.dart';
 import 'package:safar_khaneh_panel/widgets/bar_chart.dart';
 import 'package:safar_khaneh_panel/widgets/cards/show_number_card.dart';
 
-final List<int> reservations = [100, 46, 20, 12, 56, 78, 12];
-
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
