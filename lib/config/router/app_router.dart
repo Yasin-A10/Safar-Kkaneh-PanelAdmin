@@ -21,8 +21,8 @@ import 'package:safar_khaneh_panel/features/residences/presentation/residences_l
 import 'package:safar_khaneh_panel/features/transactions/presentation/transaction_detail_screen.dart';
 import 'package:safar_khaneh_panel/features/transactions/presentation/transaction_list_screen.dart';
 import 'package:safar_khaneh_panel/features/users/presentation/users_edit_screen.dart';
-import 'package:safar_khaneh_panel/roor/not_found_screen.dart';
-import 'package:safar_khaneh_panel/roor/root_screen.dart';
+import 'package:safar_khaneh_panel/root/not_found_screen.dart';
+import 'package:safar_khaneh_panel/root/root_screen.dart';
 import 'package:safar_khaneh_panel/features/dashboard/presentation/dashboard_screen.dart';
 import 'package:safar_khaneh_panel/features/menu/presentation/menu_screen.dart';
 import 'package:safar_khaneh_panel/features/users/presentation/users_list_screen.dart';
