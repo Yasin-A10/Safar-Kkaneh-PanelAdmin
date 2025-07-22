@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:safar_khaneh_panel/core/constants/colors.dart';
 import 'package:safar_khaneh_panel/core/utils/number_formater.dart';
+import 'package:safar_khaneh_panel/data/api/chart_service.dart';
 import 'package:safar_khaneh_panel/data/api/reservation_services.dart';
 import 'package:safar_khaneh_panel/data/api/residence_services.dart';
 import 'package:safar_khaneh_panel/data/api/user_services.dart';
+import 'package:safar_khaneh_panel/data/models/chart_model.dart';
 import 'package:safar_khaneh_panel/data/models/reservation_model.dart';
 import 'package:safar_khaneh_panel/data/models/residence_model.dart';
 import 'package:safar_khaneh_panel/data/models/user_model.dart';
@@ -24,9 +26,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final ReservationService _reservationService = ReservationService();
   final UserService _userService = UserService();
   final ResidenceServices _residenceService = ResidenceServices();
+  final ChartService _chartService = ChartService();
   late Future<List<ReservationModel>> _reservations;
   late Future<List<UserModel>> _users;
   late Future<List<ResidenceModel>> _residences;
+  late Future<List<ChartModel>> _chartData;
 
   @override
   void initState() {
@@ -34,6 +38,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _reservations = _reservationService.fetchReservations();
     _users = _userService.fetchUsers();
     _residences = _residenceService.fetchConfirmedResidences();
+    _chartData = _chartService.getChartData();
   }
 
   Future<void> _handleRefresh() async {
@@ -41,6 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       _reservations = _reservationService.fetchReservations();
       _users = _userService.fetchUsers();
       _residences = _residenceService.fetchConfirmedResidences();
+      _chartData = _chartService.getChartData();
     });
   }
 
@@ -132,7 +138,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  BarChartWidget(reservations: reservations),
+                  FutureBuilder(
+                    future: _chartData,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return const Center(child: Text('خطایی رخ داده است'));
+                      }
+                      if (snapshot.data!.isEmpty) {
+                        return const Center(child: Text('داده ای وجود ندارد'));
+                      }
+                      final chartData = snapshot.data!;
+                      return BarChartWidget(reservations: chartData);
+                    },
+                  ),
                 ],
               ),
             ],
