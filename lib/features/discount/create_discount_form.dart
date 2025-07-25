@@ -16,7 +16,7 @@ class CreateDiscountForm extends StatefulWidget {
 }
 
 class _CreateDiscountFormState extends State<CreateDiscountForm> {
-  final List<int> _discountTypes = [10, 20, 30, 40, 50, 60, 70, 80];
+  final List<int> _discountTypes = [10, 20, 30, 40, 50, 60, 70, 80, 90];
   int? _selectedDiscountType;
 
   final GlobalKey<FormState> _addDiscountFormKey = GlobalKey<FormState>();
